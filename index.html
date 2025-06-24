@@ -8,14 +8,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: "Modern Health Blue" - A base of #f0f4f8 (light slate), com um primário #003366 (deep navy) e um destaque #3b82f6 (blue-500). -->
-    <!-- Application Structure Plan: A SPA com layout de abas temáticas. A navegação fixa permite alternar entre seções-chave: 1) Visão Geral; 2) Regulamentações; 3) Estrutura; 4) Equipes; 5) Processos; 6) Comissões; 7) Indicadores; 8) Referências. A aba Visão Geral agora funciona como um índice, e a antiga aba Tipos de Emergência foi expandida para a aba Regulamentações. -->
+    <!-- Application Structure Plan: A SPA com layout de abas temáticas. A navegação fixa permite alternar entre seções-chave: 1) Visão Geral; 2) Tipos de Emergência; 3) Estrutura; 4) Equipes (agora incluindo a Calculadora); 5) Processos; 6) Comissões; 7) Indicadores; 8) Referências. Esta estrutura de abas foi escolhida para segmentar a informação de forma clara, permitindo que o usuário se concentre em um tópico de cada vez, o que melhora a usabilidade e a compreensão de um tema complexo e multifacetado. -->
     <!-- Visualization & Content Choices: 
         - Reguladores: Cartões interativos (HTML/CSS).
-        - Regulamentações: Cards informativos para detalhar a PNAU, RDCs e resoluções dos conselhos, agora com mais detalhes.
+        - Tipos de Emergência: Cards informativos para diferenciar os tipos, a gravidade e os níveis das UPAs.
         - Estrutura Física: Mapa visual (HTML/CSS Grid) e diagrama de blocos clicáveis (HTML/CSS+JS).
-        - Processos: Acordeão interativo (HTML/CSS+JS) com exemplos de classificação do HumanizaSUS.
-        - Comissões: Seção com cartões informativos para todas as comissões relevantes.
-        - Indicadores: Dashboard de KPIs expandido com mais exemplos e fórmulas.
+        - Processos: Acordeão interativo (HTML/CSS+JS) com fluxogramas visuais (abas HTML/CSS/JS) incluindo o novo fluxo de Trauma.
+        - Comissões: Cartões informativos.
+        - Indicadores: Dashboard de KPIs com fórmulas e barras visuais.
         - Dimensionamento: Ferramenta interativa com inputs e gráfico de rosca (Chart.js), integrada na aba 'Equipes'.
         - Referências: Lista estruturada com links para download.
     -->
@@ -114,9 +114,9 @@
 
             const tabButtonsContainer = document.getElementById('tab-buttons');
             const tabContentsContainer = document.getElementById('tab-contents');
-
-            const footerHTML = `<footer class="text-center text-sm text-gray-500 border-t border-gray-200 pt-4 mt-12">Desenvolvido por: Geovana Tomasella, 2025</footer>`;
             
+            const footerHTML = `<footer class="text-center text-sm text-gray-500 border-t border-gray-200 pt-4 mt-12">Desenvolvido por: Geovana Tomasella, 2025</footer>`;
+
             const contentHTML = {
                 'visao-geral': `
                     <h2 class="section-title text-3xl font-bold text-center mb-2">Visão Geral do Guia</h2>
@@ -180,4 +180,306 @@
                     <div class="space-y-8">
                         <div><h3 class="text-2xl font-semibold text-gray-800 mb-4">Indicadores de Fluxo e Tempo</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo de Classificação</h4><p class="text-xs text-gray-500 mb-2">Tempo da chegada até o fim da classificação de risco.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora Fim Classif.) - (Hora Chegada)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 95%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 10 min</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo Porta-Médico</h4><p class="text-xs text-gray-500 mb-2">Tempo da chegada até o primeiro atendimento médico.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora Atend. Médico) - (Hora Chegada)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-yellow-500 h-2.5 rounded-full" style="width: 80%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 60 min (Amarelo)</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo de Permanência (LOS)</h4><p class="text-xs text-gray-500 mb-2">Tempo total do paciente na unidade (não internados).</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora Saída) - (Hora Chegada)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 90%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 4 horas</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Taxa de Evasão</h4><p class="text-xs text-gray-500 mb-2">% de pacientes que saem antes do atendimento.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Nº Evasões / Nº Atend.) x 100</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 98%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 2%</p></div></div></div>
                         <div><h3 class="text-2xl font-semibold text-gray-800 mb-4">Indicadores de Processos Clínicos</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo Porta-ECG</h4><p class="text-xs text-gray-500 mb-2">Tempo da chegada até a realização do eletrocardiograma em dor torácica.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora ECG) - (Hora Chegada)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 96%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 10 min</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo Porta-TC</h4><p class="text-xs text-gray-500 mb-2">Tempo da chegada até a tomografia de crânio em suspeita de AVC.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora TC) - (Hora Chegada)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 92%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 25 min</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo para Antibiótico na Sepse</h4><p class="text-xs text-gray-500 mb-2">Tempo do diagnóstico de sepse até a primeira dose de antibiótico.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora ATB) - (Hora Diag.)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 94%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 1 hora</p></div></div></div>
-                        <div><h3 class="text-2xl font-semib
+                        <div><h3 class="text-2xl font-semibold text-gray-800 mb-4">Indicadores de Resultados e Desfecho</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Taxa de Readmissão em 30 Dias</h4><p class="text-xs text-gray-500 mb-2">% de pacientes que retornam e são internados em 30 dias.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Nº Readmissões / Nº Altas) x 100</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 97%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 3%</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Mortalidade por IAM</h4><p class="text-xs text-gray-500 mb-2">Taxa de óbitos em pacientes diagnosticados com IAM.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Nº Óbitos por IAM / Nº Casos IAM) x 100</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 95%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 5%</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Satisfação do Paciente</h4><p class="text-xs text-gray-500 mb-2">Pontuação em pesquisas de satisfação (NPS, etc.).</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: Varia com a metodologia.</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 90%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &gt; 90%</p></div></div></div>
+                    </div>
+                `,
+                'referencias': `
+                    <h2 class="section-title text-3xl font-bold text-center mb-2">Referências Bibliográficas</h2>
+                    <p class="text-center text-lg text-gray-600 mb-8 max-w-3xl mx-auto">A base legal e científica para a estruturação e operação de unidades de emergência no Brasil.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="font-bold text-xl text-[#003366] mb-3">Leis e Portarias</h3><ul class="space-y-2 text-gray-700 list-disc list-inside"><li>BRASIL. Ministério da Saúde. Portaria de Consolidação nº 3, de 28 de setembro de 2017. <a href="https://bvsms.saude.gov.br/bvs/saudelegis/gm/2017/prc0003_03_10_2017.html" target="_blank" class="text-blue-600 hover:underline">[Baixar Arquivo]</a></li><li>BRASIL. ANVISA. RDC nº 50, de 21 de fevereiro de 2002. <a href="https://bvsms.saude.gov.br/bvs/saudelegis/anvisa/2002/rdc0050_21_02_2002.html" target="_blank" class="text-blue-600 hover:underline">[Baixar Arquivo]</a></li><li>BRASIL. ANVISA. RDC nº 63, de 25 de novembro de 2011. <a href="https://bvsms.saude.gov.br/bvs/saudelegis/anvisa/2011/rdc0063_25_11_2011.html" target="_blank" class="text-blue-600 hover:underline">[Baixar Arquivo]</a></li></ul></div>
+                        <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="font-bold text-xl text-[#003366] mb-3">Resoluções de Conselhos</h3><ul class="space-y-2 text-gray-700 list-disc list-inside"><li>Conselho Federal de Medicina (CFM). Resolução nº 2.077/2014. <a href="https://sistemas.cfm.org.br/normas/visualizar/resolucoes/BR/2014/2077" target="_blank" class="text-blue-600 hover:underline">[Baixar Arquivo]</a></li><li>Conselho Federal de Enfermagem (COFEN). Resolução nº 543/2017. <a href="http://www.cofen.gov.br/resolucao-cofen-no-05432017_51440.html" target="_blank" class="text-blue-600 hover:underline">[Baixar Arquivo]</a></li></ul></div>
+                        <div class="bg-white p-6 rounded-lg shadow-md"><h3 class="font-bold text-xl text-[#003366] mb-3">Artigos e Livros</h3><ul class="space-y-2 text-gray-700 list-disc list-inside"><li>Grupo Brasileiro de Classificação de Risco. "Protocolo de Manchester". <a href="http://gbcr.org.br/" target="_blank" class="text-blue-600 hover:underline">[Acessar Site]</a></li><li>"ACLS - Suporte Avançado de Vida em Cardiologia". American Heart Association.</li><li>"Surviving Sepsis Campaign: International Guidelines".</li></ul></div>
+                    </div>
+                `
+            };
+            
+            sections.forEach(section => {
+                const button = document.createElement('button');
+                button.className = 'tab-button text-gray-500 hover:text-[#003366] py-4 px-3 text-sm font-medium whitespace-nowrap flex items-center space-x-2';
+                button.innerHTML = `<span>${section.icon}</span> <span>${section.title}</span>`;
+                button.dataset.tab = section.id;
+                tabButtonsContainer.appendChild(button);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.id = section.id;
+                contentDiv.className = 'tab-content';
+                contentDiv.innerHTML = contentHTML[section.id] + footerHTML;
+                tabContentsContainer.appendChild(contentDiv);
+            });
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function switchTab(tabId) {
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                tabButtons.forEach(button => {
+                    button.classList.remove('active');
+                });
+                
+                const activeContent = document.getElementById(tabId)
+                if(activeContent) {
+                   activeContent.classList.remove('hidden');
+                }
+                const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+                if(activeButton) {
+                   activeButton.classList.add('active');
+                }
+                
+                if (tabId === 'processos') initializeAccordion();
+                if (tabId === 'estrutura') initializeStructureExplorer();
+                if (tabId === 'equipes') initializeCalculator();
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchTab(button.dataset.tab);
+                });
+            });
+            
+            document.getElementById('tab-contents').addEventListener('click', function(e) {
+                if (e.target.closest('[data-tab-link]')) {
+                    e.preventDefault();
+                    switchTab(e.target.closest('[data-tab-link]').dataset.tabLink);
+                }
+            });
+
+            switchTab('visao-geral');
+
+            function initializeAccordion() {
+                const accordionContainer = document.getElementById('process-accordion');
+                if(!accordionContainer || accordionContainer.dataset.initialized) return;
+                accordionContainer.dataset.initialized = 'true';
+
+                 const processData = [
+                    {
+                        title: "1. Acolhimento e Classificação de Risco",
+                        details: "Esta é a porta de entrada do serviço. Um enfermeiro realiza uma avaliação rápida e estruturada para identificar a gravidade do caso e definir a prioridade de atendimento, otimizando o fluxo e garantindo que os mais graves sejam vistos primeiro.",
+                        example: `<div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="overflow-x-auto"><p class="font-semibold text-gray-800 mb-2">Exemplo 1: Protocolo de Manchester</p><table class="w-full text-sm text-left text-gray-500"><thead class="text-xs text-gray-700 uppercase bg-gray-100"><tr><th class="px-4 py-2">Cor</th><th class="px-4 py-2">Nível</th><th class="px-4 py-2">Tempo de Atendimento</th></tr></thead><tbody><tr class="border-b"><td class="px-4 py-2 font-medium text-red-600">Vermelho</td><td class="px-4 py-2">Emergência</td><td class="px-4 py-2">Imediato</td></tr><tr class="border-b"><td class="px-4 py-2 font-medium text-orange-500">Laranja</td><td class="px-4 py-2">Muito Urgente</td><td class="px-4 py-2">Até 10 min</td></tr><tr class="border-b"><td class="px-4 py-2 font-medium text-yellow-500">Amarelo</td><td class="px-4 py-2">Urgente</td><td class="px-4 py-2">Até 60 min</td></tr><tr class="border-b"><td class="px-4 py-2 font-medium text-green-600">Verde</td><td class="px-4 py-2">Pouco Urgente</td><td class="px-4 py-2">Até 120 min</td></tr><tr><td class="px-4 py-2 font-medium text-blue-600">Azul</td><td class="px-4 py-2">Não Urgente</td><td class="px-4 py-2">Até 240 min</td></tr></tbody></table></div> <div class="overflow-x-auto"><p class="font-semibold text-gray-800 mb-2">Exemplo 2: Classificação HumanizaSUS</p><table class="w-full text-sm text-left text-gray-500"><thead class="text-xs text-gray-700 uppercase bg-gray-100"><tr><th class="px-4 py-2">Cor</th><th class="px-4 py-2">Critério</th><th class="px-4 py-2">Ação</th></tr></thead><tbody><tr class="border-b"><td class="px-4 py-2 font-medium text-red-600">Vermelho</td><td class="px-4 py-2">Necessidade Imediata</td><td class="px-4 py-2">Atender imediatamente</td></tr><tr class="border-b"><td class="px-4 py-2 font-medium text-yellow-500">Amarelo</td><td class="px-4 py-2">Urgência, sem risco iminente</td><td class="px-4 py-2">Atendimento rápido</td></tr><tr class="border-b"><td class="px-4 py-2 font-medium text-green-600">Verde</td><td class="px-4 py-2">Baixa urgência</td><td class="px-4 py-2">Pode aguardar</td></tr><tr class="border-b"><td class="px-4 py-2 font-medium text-blue-600">Azul</td><td class="px-4 py-2">Consulta de rotina</td><td class="px-4 py-2">Encaminhar à UBS</td></tr></tbody></table></div></div>`,
+                        references: "<strong>Referências:</strong> Protocolo de Manchester (Internacional); Política Nacional de Humanização - HumanizaSUS (Nacional)."
+                    },
+                    {
+                        title: "2. Atendimento Médico e Diagnóstico",
+                        details: "Após a classificação, o paciente é avaliado pela equipe médica. O foco é em uma anamnese e exame físico direcionados. Protocolos gerenciados para condições tempo-sensíveis são cruciais nesta fase para garantir a melhor conduta no menor tempo possível.",
+                        example: `<div class="mb-4"><div class="flex border-b"><button data-tab="iam" class="protocol-tab flex-1 p-2 font-semibold text-center bg-gray-200 rounded-tl-lg active">Dor Torácica (IAM)</button><button data-tab="sepse" class="protocol-tab flex-1 p-2 font-semibold text-center bg-gray-200">Sepse</button><button data-tab="avc" class="protocol-tab flex-1 p-2 font-semibold text-center bg-gray-200 rounded-tr-lg">AVC</button><button data-tab="trauma" class="protocol-tab flex-1 p-2 font-semibold text-center bg-gray-200 rounded-tr-lg">Trauma</button></div>
+                        <div id="iam" class="p-4 protocol-content"><p class="font-semibold text-gray-800 mb-2">Fluxo de Dor Torácica (Suspeita de IAM)</p><div class="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 text-center"><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/5"><strong>Chegada</strong><p class="text-xs">Dor torácica</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-2"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/5"><strong>Meta: &lt; 10 min</strong><p class="text-xs">ECG + Atendimento</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-2"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/5"><strong>Diagnóstico</strong><p class="text-xs">Confirma IAMCSST</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-2"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-red-100 rounded-md w-full md:w-1/5"><strong class="text-red-800">Ação Crítica</strong><p class="text-xs text-red-700">Acionar Hemodinâmica. Meta porta-balão &lt; 90 min.</p></div></div></div>
+                        <div id="sepse" class="p-4 protocol-content hidden"><p class="font-semibold text-gray-800 mb-2">Fluxo de Sepse</p><div class="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 text-center"><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/4"><strong>Reconhecimento</strong><p class="text-xs">Sinais de infecção + Disfunção orgânica (qSOFA)</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-2"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/4"><strong>Pacote da 1ª Hora</strong><p class="text-xs">Coletar lactato e hemoculturas.</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-2"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-red-100 rounded-md w-full md:w-1/4"><strong class="text-red-800">Ação Imediata</strong><p class="text-xs text-red-700">Antibiótico de amplo espectro + Reposição volêmica (30ml/kg).</p></div></div></div>
+                        <div id="avc" class="p-4 protocol-content hidden"><p class="font-semibold text-gray-800 mb-2">Fluxo de Acidente Vascular Cerebral (AVC)</p><div class="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 text-center"><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/4"><strong>Reconhecimento</strong><p class="text-xs">Escala pré-hospitalar (FAST/Cincinnati). Déficit focal súbito.</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-2"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/4"><strong>Meta: &lt; 25 min</strong><p class="text-xs">Realização de Tomografia de Crânio.</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-2"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-red-100 rounded-md w-full md:w-1/4"><strong class="text-red-800">Decisão Terapêutica</strong><p class="text-xs text-red-700">Trombólise venosa se indicado. Meta porta-agulha &lt; 60 min.</p></div></div></div>
+                        <div id="trauma" class="p-4 protocol-content hidden"><p class="font-semibold text-gray-800 mb-2">Fluxo de Trauma (Abordagem XABCDE)</p><div class="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 text-center"><div class="flow-step p-2 bg-orange-100 rounded-md w-full md:w-1/6"><strong>X</strong><p class="text-xs">Hemorragia Exsanguinante</p></div><div class="flow-arrow text-orange-500 text-2xl font-bold mx-1"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/6"><strong>A</strong><p class="text-xs">Vias Aéreas + Colar Cervical</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-1"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/6"><strong>B</strong><p class="text-xs">Respiração e Ventilação</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-1"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/6"><strong>C</strong><p class="text-xs">Circulação com Controle de Hemorragia</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-1"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/6"><strong>D</strong><p class="text-xs">Disfunção Neurológica (Glasgow)</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-1"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-2 bg-blue-100 rounded-md w-full md:w-1/6"><strong>E</strong><p class="text-xs">Exposição e Controle do Ambiente</p></div></div></div></div>`,
+                        references: "<strong>Referências:</strong> PHTLS - Prehospital Trauma Life Support (Internacional); ATLS - Advanced Trauma Life Support (Internacional)."
+                    },
+                     {
+                        title: "3. Estabilização e Observação",
+                        details: "Pacientes que necessitam de monitoramento contínuo são alocados em leitos de observação ou na Sala de Emergência. A equipe realiza reavaliações constantes, ajusta terapias e acompanha a evolução clínica para decidir o próximo passo.",
+                        example: `<p class="font-semibold text-gray-800 mb-2">Fluxo Ideal do Paciente na Unidade:</p><div class="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 text-center"><div class="flow-step p-3 bg-blue-100 rounded-lg w-full md:w-1/4"><strong class="text-sm">1. Admissão Crítica</strong><p class="text-xs mt-1">Paciente instável vai para a Sala Vermelha para estabilização imediata.</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-2"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-3 bg-blue-100 rounded-lg w-full md:w-1/4"><strong class="text-sm">2. Leito de Observação</strong><p class="text-xs mt-1">Após estabilização, é movido para observação para monitoramento contínuo.</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-2"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-3 bg-blue-100 rounded-lg w-full md:w-1/4"><strong class="text-sm">3. Reavaliação Contínua</strong><p class="text-xs mt-1">Equipe reavalia periodicamente para ajustar terapia e verificar resposta.</p></div><div class="flow-arrow text-blue-500 text-2xl font-bold mx-2"><span class="md:hidden">&darr;</span><span class="hidden md:block">&rarr;</span></div><div class="flow-step p-3 bg-red-100 rounded-lg w-full md:w-1/4"><strong class="text-sm text-red-800">4. Decisão de Destino</strong><p class="text-xs mt-1 text-red-700">Com base na evolução, define-se alta ou transferência via regulação.</p></div></div>`,
+                        references: "<strong>Referências:</strong> GINA - Global Initiative for Asthma (Internacional); Protocolos Clínicos e Diretrizes Terapêuticas do MS (Nacional)."
+                    },
+                    {
+                        title: "4. Regulação e Transferência ou Alta",
+                        details: "É a fase final do atendimento de emergência. Pacientes estabilizados recebem alta com orientações claras. Pacientes que necessitam de internação são regulados via sistema estadual/municipal para um leito hospitalar.",
+                        example: `<p class="font-semibold text-gray-800 mb-2">Simulação de Ferramentas:</p><div class="grid grid-cols-1 lg:grid-cols-2 gap-4"><div class="border border-gray-300 rounded-lg p-3 bg-gray-50"><h5 class="font-bold text-center text-gray-700">Ferramenta SBAR</h5><p class="text-xs text-center text-gray-500 mb-2">Comunicação para Transferência</p><div class="text-sm space-y-1"><p><strong>S (Situação):</strong> Paciente J.S., 65 anos, diagnóstico de IAMCSST.</p><p><strong>B (Breve Histórico):</strong> Hipertenso, diabético, medicação em uso: Losartana. Exames: ECG com supra de ST. Troponina elevada.</p><p><strong>A (Avaliação):</strong> Estável, PA 130x80 mmHg, FC 88bpm, SatO2 96%.</p><p><strong>R (Recomendação):</strong> Solicito vaga em UTI Cardiológica para seguimento pós-angioplastia.</p></div></div><div class="border border-gray-300 rounded-lg p-3 bg-gray-50"><h5 class="font-bold text-center text-gray-700">Plataforma CIRESP (Simulação)</h5><p class="text-xs text-center text-gray-500 mb-2">Sistema de Regulação de Vagas</p><div class="text-sm space-y-1"><p><strong>Status:</strong> <span class="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">AGUARDANDO VAGA</span></p><p><strong>Paciente:</strong> J.S. | <strong>Leito Solicitado:</strong> UTI</p><p><strong>Origem:</strong> UPA ZONA NORTE | <strong>Destino:</strong> A DEFINIR</p><p><strong>CIH:</strong> 123456789</p></div></div></div>`,
+                        references: "<strong>Referências:</strong> Ferramenta SBAR - Institute for Healthcare Improvement (Internacional); Portarias do MS sobre Centrais de Regulação (Nacional)."
+                    }
+                ];
+                
+                accordionContainer.innerHTML = '';
+                processData.forEach((item) => {
+                    const accordionItem = document.createElement('div');
+                    accordionItem.className = 'card bg-white rounded-lg shadow-lg overflow-hidden';
+                    accordionItem.innerHTML = `<h2><button type="button" class="accordion-button flex items-center justify-between w-full p-6 font-bold text-left text-xl text-[#003366] hover:bg-blue-50" aria-expanded="false"><span>${item.title}</span><svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button></h2><div class="accordion-content"><div class="p-6 border-t border-gray-200"><p class="text-gray-700 mb-4">${item.details}</p><div class="bg-blue-50 p-4 rounded-md mb-4">${item.example}</div><p class="text-sm text-gray-600">${item.references}</p></div></div>`;
+                    accordionContainer.appendChild(accordionItem);
+                });
+                
+                accordionContainer.addEventListener('click', function(event) {
+                    const button = event.target.closest('.accordion-button');
+                    if (button) {
+                        const allButtons = accordionContainer.querySelectorAll('.accordion-button');
+                        const content = button.parentElement.nextElementSibling;
+                        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+                        allButtons.forEach(otherButton => {
+                            if (otherButton !== button) {
+                                otherButton.setAttribute('aria-expanded', 'false');
+                                otherButton.parentElement.nextElementSibling.style.maxHeight = '0';
+                            }
+                        });
+                        
+                        button.setAttribute('aria-expanded', !isExpanded);
+                        if (!isExpanded) {
+                            content.style.maxHeight = content.scrollHeight + "px";
+                        } else {
+                            content.style.maxHeight = "0";
+                        }
+                    }
+                    
+                    const tabButton = event.target.closest('.protocol-tab');
+                    if (tabButton) {
+                        const tabContainer = tabButton.parentElement;
+                        const contentContainer = tabButton.closest('.accordion-content');
+                        
+                        tabContainer.querySelectorAll('.protocol-tab').forEach(tab => tab.classList.remove('active'));
+                        tabButton.classList.add('active');
+                        
+                        contentContainer.querySelectorAll('.protocol-content').forEach(content => {
+                            if (content.id === tabButton.dataset.tab) {
+                                content.classList.remove('hidden');
+                            } else {
+                                content.classList.add('hidden');
+                            }
+                        });
+                        const accordionContent = tabButton.closest('.accordion-content');
+                        if (accordionContent.style.maxHeight !== '0px') {
+                            accordionContent.style.maxHeight = accordionContent.scrollHeight + "px";
+                        }
+                    }
+                });
+            }
+
+
+            // Explorador de Estrutura
+            function initializeStructureExplorer() {
+                 const structureData = {
+                    'Classificação de Risco': {
+                        desc: 'Local para a primeira avaliação do paciente, definindo a prioridade de atendimento.',
+                        dim: 'Área mínima: 7,5 m²',
+                        reqs: ['Bancada com pia', 'Proximidade da entrada de pacientes'],
+                        equips: ['Esfigmomanômetro', 'Termômetro', 'Oxímetro de pulso']
+                    },
+                    'Sala de Emergência (Vermelha)': {
+                        desc: 'Destinada ao atendimento de pacientes críticos com risco iminente de morte.',
+                        dim: 'Área mínima: 15 m² por leito',
+                        reqs: ['Pontos de O2, vácuo e ar comprimido', 'Iluminação de emergência', 'Piso e paredes laváveis'],
+                        equips: ['Monitor multiparâmetros', 'Ventilador mecânico', 'Desfibrilador', 'Carro de emergência']
+                    },
+                    'Leitos de Observação': {
+                        desc: 'Para pacientes que precisam de monitoramento ou aguardam transferência.',
+                        dim: 'Área mínima: 6,0 m² por leito (coletivo)',
+                        reqs: ['Ponto de oxigênio por leito', 'Distanciamento mínimo de 1m entre leitos', 'Sanitário para pacientes próximo'],
+                        equips: ['Monitor de sinais vitais', 'Bomba de infusão', 'Acesso a ECG']
+                    },
+                    'Sala de Procedimentos': {
+                        desc: 'Utilizada para procedimentos como suturas, drenagens e pequenas cirurgias.',
+                        dim: 'Área mínima: 9,0 m²',
+                        reqs: ['Bancada com pia de lavagem', 'Foco de luz cirúrgico', 'Revestimentos laváveis'],
+                        equips: ['Mesa cirúrgica auxiliar', 'Bisturi elétrico', 'Material de sutura e curativo']
+                    },
+                };
+
+                const structureGrid = document.getElementById('structure-grid');
+                if(!structureGrid) return;
+                structureGrid.innerHTML = '';
+
+                const detailsSection = document.getElementById('structure-details');
+                const detailsTitle = document.getElementById('details-title');
+                const detailsDesc = document.getElementById('details-desc');
+                const detailsDim = document.getElementById('details-dim');
+                const detailsReqs = document.getElementById('details-reqs');
+                const detailsEquips = document.getElementById('details-equips');
+
+                Object.keys(structureData).forEach(key => {
+                    const button = document.createElement('button');
+                    button.className = 'card bg-gray-100 p-4 rounded-lg text-center font-semibold text-[#003366] hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500';
+                    button.textContent = key;
+                    button.addEventListener('click', () => {
+                        const data = structureData[key];
+                        detailsTitle.textContent = key;
+                        detailsDesc.textContent = data.desc;
+                        detailsDim.textContent = data.dim;
+
+                        detailsReqs.innerHTML = '';
+                        data.reqs.forEach(item => {
+                            const li = document.createElement('li');
+                            li.textContent = item;
+                            detailsReqs.appendChild(li);
+                        });
+
+                        detailsEquips.innerHTML = '';
+                        data.equips.forEach(item => {
+                            const li = document.createElement('li');
+                            li.textContent = item;
+                            detailsEquips.appendChild(li);
+                        });
+                        
+                        detailsSection.classList.remove('hidden');
+                    });
+                    structureGrid.appendChild(button);
+                });
+            }
+            
+            // Calculadora
+            function initializeCalculator() {
+                 const inputs = [
+                    document.getElementById('cuidado-intensivo'),
+                    document.getElementById('cuidado-semi-intensivo'),
+                    document.getElementById('cuidado-intermediario'),
+                    document.getElementById('cuidado-minimo')
+                ];
+                if(!inputs[0]) return;
+
+                const theResultEl = document.getElementById('the-result');
+                const totalStaffResultEl = document.getElementById('total-staff-result');
+                
+                const careHours = {
+                    intensivo: 17.9,
+                    semi: 9.4,
+                    intermediario: 5.6,
+                    minimo: 3.8
+                };
+                const dailyWorkHours = 6; 
+                let staffingChart = null;
+
+                function calculateStaffing() {
+                    const p_intensivo = parseFloat(inputs[0].value) || 0;
+                    const p_semi = parseFloat(inputs[1].value) || 0;
+                    const p_intermediario = parseFloat(inputs[2].value) || 0;
+                    const p_minimo = parseFloat(inputs[3].value) || 0;
+
+                    const totalTHE = (p_intensivo * careHours.intensivo) + (p_semi * careHours.semi) + (p_intermediario * careHours.intermediario) + (p_minimo * careHours.minimo);
+                    const totalQP = (totalTHE / dailyWorkHours) * 1.15; 
+
+                    theResultEl.textContent = totalTHE.toFixed(2);
+                    totalStaffResultEl.textContent = Math.ceil(totalQP);
+                    
+                    let nurse_pct = 0.33;
+                    if (p_intensivo > 0) nurse_pct = 0.52;
+                    else if (p_semi > 0) nurse_pct = 0.42;
+                    
+                    const totalStaff = Math.ceil(totalQP);
+                    const nurses = Math.ceil(totalStaff * nurse_pct);
+                    const techs = totalStaff - nurses;
+
+                    updateChart(nurses, techs);
+                }
+
+                function updateChart(nurses, techs) {
+                    const data = {
+                        labels: ['Enfermeiros', 'Técnicos/Auxiliares'],
+                        datasets: [{ label: 'Nº de Profissionais', data: [nurses, techs], backgroundColor: ['#003366', '#3b82f6'], borderColor: '#f0f4f8', borderWidth: 2, hoverOffset: 4 }]
+                    };
+
+                    if (staffingChart) {
+                        staffingChart.data = data;
+                        staffingChart.update();
+                    } else {
+                        const ctx = document.getElementById('staffing-chart').getContext('2d');
+                        if(!ctx) return;
+                        staffingChart = new Chart(ctx, {
+                            type: 'doughnut',
+                            data: data,
+                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: (c) => `${c.label}: ${c.raw}` } } } }
+                        });
+                    }
+                }
+
+                inputs.forEach(input => input.addEventListener('input', calculateStaffing));
+                calculateStaffing();
+            }
+            
+            switchTab('visao-geral'); // Initialize with the first tab
+
+        });
+    </script>
+</body>
+</html>
