@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Interativo: Unidades de Emergência no Brasil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: "Modern Health Blue" - A base of #f0f4f8 (light slate), com um primário #003366 (deep navy) e um destaque #3b82f6 (blue-500). -->
+    <!-- Application Structure Plan: A SPA com layout de abas temáticas. A navegação fixa permite alternar entre seções-chave: 1) Visão Geral; 2) Regulamentações; 3) Estrutura; 4) Equipes; 5) Processos; 6) Comissões; 7) Indicadores; 8) Referências. A aba Visão Geral agora funciona como um índice, e a antiga aba Tipos de Emergência foi expandida para a aba Regulamentações. -->
+    <!-- Visualization & Content Choices: 
+        - Reguladores: Cartões interativos (HTML/CSS).
+        - Regulamentações: Cards informativos para detalhar a PNAU, RDCs e resoluções dos conselhos, agora com mais detalhes.
+        - Estrutura Física: Mapa visual (HTML/CSS Grid) e diagrama de blocos clicáveis (HTML/CSS+JS).
+        - Processos: Acordeão interativo (HTML/CSS+JS) com exemplos de classificação do HumanizaSUS.
+        - Comissões: Seção com cartões informativos para todas as comissões relevantes.
+        - Indicadores: Dashboard de KPIs expandido com mais exemplos e fórmulas.
+        - Dimensionamento: Ferramenta interativa com inputs e gráfico de rosca (Chart.js), integrada na aba 'Equipes'.
+        - Referências: Lista estruturada com links para download.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #1f2937;
+        }
+        .section-title {
+            color: #003366;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button.active {
+            border-bottom-color: #3b82f6;
+            color: #003366;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 320px;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .accordion-button svg {
+            transition: transform 0.3s ease;
+        }
+        .accordion-button[aria-expanded="true"] svg {
+            transform: rotate(180deg);
+        }
+        .flow-step {
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .protocol-tab {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .protocol-tab.active {
+            background-color: #003366;
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="bg-white">
+        <header class="bg-[#003366] shadow-md">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                 <h1 class="text-white text-2xl md:text-3xl font-bold text-center">Guia Interativo de Estruturação de Unidades de Emergência</h1>
+            </div>
+        </header>
+
+        <nav class="bg-white shadow-sm sticky top-0 z-40">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="overflow-x-auto">
+                    <div id="tab-buttons" class="flex flex-wrap justify-center space-x-1 md:space-x-4 border-b border-gray-200">
+                        <!-- Tab buttons will be injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div id="tab-contents">
+                <!-- Tab contents will be injected by JS -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const sections = [
+                { id: 'visao-geral', title: 'Visão Geral', icon: '👁️' },
+                { id: 'regulamentacoes', title: 'Regulamentações', icon: '📜' },
+                { id: 'estrutura', title: 'Estrutura', icon: '🗺️' },
+                { id: 'equipes', title: 'Equipes', icon: '🧑‍⚕️' },
+                { id: 'processos', title: 'Processos', icon: '🔄' },
+                { id: 'comissoes', title: 'Comissões', icon: '📋' },
+                { id: 'indicadores', title: 'Indicadores', icon: '📊' },
+                { id: 'referencias', title: 'Referências', icon: '📖' }
+            ];
+
+            const tabButtonsContainer = document.getElementById('tab-buttons');
+            const tabContentsContainer = document.getElementById('tab-contents');
+
+            const footerHTML = `<footer class="text-center text-sm text-gray-500 border-t border-gray-200 pt-4 mt-12">Desenvolvido por: Geovana Tomasella, 2025</footer>`;
+            
+            const contentHTML = {
+                'visao-geral': `
+                    <h2 class="section-title text-3xl font-bold text-center mb-2">Visão Geral do Guia</h2>
+                    <p class="text-center text-lg text-gray-600 mb-8 max-w-3xl mx-auto">Este guia interativo consolida as principais normas, processos e ferramentas para a estruturação e gestão de unidades de emergência no Brasil. Navegue pelas abas para explorar cada componente.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                        <a href="#" data-tab-link="regulamentacoes" class="card block bg-white p-6 rounded-lg shadow-lg hover:bg-blue-50"><h3 class="font-bold text-xl text-[#003366] mb-2">Regulamentações</h3><p class="text-gray-700 text-sm">Conheça as leis, portarias e resoluções que formam o arcabouço legal dos serviços de emergência.</p></a>
+                        <a href="#" data-tab-link="estrutura" class="card block bg-white p-6 rounded-lg shadow-lg hover:bg-blue-50"><h3 class="font-bold text-xl text-[#003366] mb-2">Estrutura Física</h3><p class="text-gray-700 text-sm">Explore a planta baixa ideal, os dimensionamentos mínimos por sala e os serviços de apoio necessários.</p></a>
+                        <a href="#" data-tab-link="equipes" class="card block bg-white p-6 rounded-lg shadow-lg hover:bg-blue-50"><h3 class="font-bold text-xl text-[#003366] mb-2">Equipes e Dimensionamento</h3><p class="text-gray-700 text-sm">Entenda os papéis e responsabilidades de cada profissional e use a calculadora para dimensionar sua equipe de enfermagem.</p></a>
+                        <a href="#" data-tab-link="processos" class="card block bg-white p-6 rounded-lg shadow-lg hover:bg-blue-50"><h3 class="font-bold text-xl text-[#003366] mb-2">Processos e Fluxos</h3><p class="text-gray-700 text-sm">Navegue pela jornada do paciente, desde a classificação de risco até os protocolos clínicos de IAM, AVC, Sepse e Trauma.</p></a>
+                        <a href="#" data-tab-link="comissoes" class="card block bg-white p-6 rounded-lg shadow-lg hover:bg-blue-50"><h3 class="font-bold text-xl text-[#003366] mb-2">Comissões Obrigatórias</h3><p class="text-gray-700 text-sm">Conheça as comissões essenciais para a governança clínica, segurança e ética na unidade.</p></a>
+                        <a href="#" data-tab-link="indicadores" class="card block bg-white p-6 rounded-lg shadow-lg hover:bg-blue-50"><h3 class="font-bold text-xl text-[#003366] mb-2">Indicadores de Gestão</h3><p class="text-gray-700 text-sm">Monitore os principais KPIs de fluxo, tempo, qualidade e segurança, incluindo os gerenciados pela ANS.</p></a>
+                    </div>
+                `,
+                'regulamentacoes': `
+                    <h2 class="section-title text-3xl font-bold text-center mb-2">Regulamentações dos Serviços de Emergência</h2>
+                    <p class="text-center text-lg text-gray-600 mb-8 max-w-3xl mx-auto">O funcionamento das unidades de emergência é guiado por um conjunto robusto de normas. Conheça as principais regulamentações que definem desde os conceitos básicos até a estrutura da rede de atendimento.</p>
+                    <div class="space-y-12">
+                        <div><h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Política Nacional de Atenção às Urgências (PNAU)</h3><div class="card bg-white p-6 rounded-lg shadow-lg"><p class="text-gray-700">Instituída para organizar a atenção às urgências no SUS, a PNAU estrutura a **Rede de Atenção às Urgências (RUE)**, que integra e articula os diferentes pontos de atenção para garantir um atendimento contínuo, qualificado e humanizado ao paciente.</p><p class="mt-4 font-semibold text-[#003366]">Componentes da RUE:</p><ul class="list-disc list-inside text-gray-700 mt-2"><li>SAMU 192 (componente pré-hospitalar móvel)</li><li>Unidades de Pronto Atendimento (UPA 24h) e outros serviços de urgência</li><li>Portas hospitalares de urgência</li><li>Atenção domiciliar</li></ul><p class="text-xs italic text-gray-500 mt-4">Referência: Portaria de Consolidação MS nº 3/2017</p></div></div>
+                        <div><h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Normas de Estrutura e Funcionamento da ANVISA</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="card bg-white p-6 rounded-lg shadow-lg"><h4 class="font-bold text-xl text-[#003366] mb-2">RDC nº 50/2002</h4><p class="text-sm text-gray-700 mb-3">A base para o planejamento físico. Define critérios para:</p><ul class="text-sm list-disc list-inside space-y-1"><li>**Fluxos:** Separação de circulação de pacientes, equipe e materiais (limpos e sujos).</li><li>**Dimensionamento:** Áreas mínimas para salas de consulta, emergência, etc.</li><li>**Acabamentos:** Uso de materiais de fácil higienização em pisos, paredes e tetos.</li></ul></div><div class="card bg-white p-6 rounded-lg shadow-lg"><h4 class="font-bold text-xl text-[#003366] mb-2">RDC nº 63/2011</h4><p class="text-sm text-gray-700 mb-3">Foca nas Boas Práticas de Funcionamento. Exige:</p><ul class="text-sm list-disc list-inside space-y-1"><li>Plano de Gerenciamento de Resíduos (PGRSS).</li><li>Núcleo de Segurança do Paciente (NSP) com protocolos de prevenção.</li><li>Protocolos de higienização das mãos e controle de infecção.</li></ul></div></div></div>
+                        <div><h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Níveis de Complexidade: Unidades de Pronto Atendimento (UPA 24h)</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="card bg-white p-6 rounded-lg shadow-lg"><h4 class="font-bold text-xl text-[#003366] mb-2">UPA Porte I</h4><ul class="space-y-2 text-gray-700 text-sm"><li><strong>População na área:</strong> 50 mil a 100 mil hab.</li><li><strong>Capacidade/dia:</strong> Até 150 pacientes.</li><li><strong>Leitos de Observação:</strong> Mínimo 7.</li></ul></div><div class="card bg-white p-6 rounded-lg shadow-lg"><h4 class="font-bold text-xl text-[#003366] mb-2">UPA Porte II</h4><ul class="space-y-2 text-gray-700 text-sm"><li><strong>População na área:</strong> 100 mil a 200 mil hab.</li><li><strong>Capacidade/dia:</strong> Até 300 pacientes.</li><li><strong>Leitos de Observação:</strong> Mínimo 11.</li></ul></div><div class="card bg-white p-6 rounded-lg shadow-lg"><h4 class="font-bold text-xl text-[#003366] mb-2">UPA Porte III</h4><ul class="space-y-2 text-gray-700 text-sm"><li><strong>População na área:</strong> 200 mil a 300 mil hab.</li><li><strong>Capacidade/dia:</strong> Até 450 pacientes.</li><li><strong>Leitos de Observação:</strong> Mínimo 15.</li></ul></div></div><p class="text-xs italic text-center text-gray-500 mt-4">Referência Técnica: Portaria de Consolidação MS nº 3/2017 (Anexo III - RUE).</p></div>
+                    </div>
+                `,
+                'estrutura': `
+                    <h2 class="section-title text-3xl font-bold text-center mb-2">Estrutura Física e Dimensionamento</h2>
+                    <p class="text-center text-lg text-gray-600 mb-8 max-w-3xl mx-auto">Uma estrutura bem planejada, baseada na RDC 50/2002, é fundamental para um fluxo de trabalho seguro e eficiente. Explore o mapa de exemplo e os detalhes de cada área.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-lg mb-8"><h3 class="font-bold text-xl text-[#003366] mb-4 text-center">Exemplo de Planta Baixa Funcional</h3><div class="bg-gray-100 p-4 rounded-lg border-2 border-gray-300"><div class="grid grid-cols-12 grid-rows-6 gap-2 h-[450px]"><div class="col-span-4 row-span-1 bg-gray-300 rounded p-1 flex flex-col items-center justify-center"><span class="font-bold text-xs">ENTRADA AMBULÂNCIA</span><span class="text-2xl mt-1">🚑</span></div><div class="col-span-8 row-span-1 bg-gray-300 rounded p-1 flex items-center justify-center"><span class="font-bold text-xs">RECEPÇÃO / ENTRADA PACIENTES</span></div><div class="col-span-4 row-span-3 bg-red-200 rounded p-2 flex flex-col items-center justify-start border-2 border-red-400"><span class="font-bold text-xs text-red-800">SALA VERMELHA</span><div class="grid grid-cols-2 gap-2 mt-2 w-full flex-grow"><div class="bg-red-500/80 text-white rounded text-[10px] p-1 flex items-center justify-center">Leito 1</div><div class="bg-red-500/80 text-white rounded text-[10px] p-1 flex items-center justify-center">Leito 2</div></div></div><div class="col-span-3 row-span-1 bg-blue-200 rounded p-1 flex items-center justify-center"><span class="font-bold text-xs text-blue-800">CLASSIFICAÇÃO</span></div><div class="col-span-5 row-span-1 bg-yellow-200 rounded p-1 flex items-center justify-around"><div class="bg-yellow-400/80 h-10 w-10 rounded"></div><div class="bg-yellow-400/80 h-10 w-10 rounded"></div><span class="font-bold text-xs text-yellow-800">CONSULTÓRIOS</span></div><div class="col-span-8 row-span-2 bg-green-200 rounded p-2 flex flex-col items-center border-2 border-green-400"><span class="font-bold text-xs text-green-800 mb-2">OBSERVAÇÃO</span><div class="grid grid-cols-4 gap-2 w-full h-full"><div class="bg-green-500/80 text-white rounded text-[10px] p-1 flex items-center justify-center">Leito 3</div><div class="bg-green-500/80 text-white rounded text-[10px] p-1 flex items-center justify-center">Leito 4</div><div class="bg-green-500/80 text-white rounded text-[10px] p-1 flex items-center justify-center">Leito 5</div><div class="bg-green-500/80 text-white rounded text-[10px] p-1 flex items-center justify-center">Leito 6</div><div class="bg-green-500/80 text-white rounded text-[10px] p-1 flex items-center justify-center">Leito 7</div><div class="bg-green-500/80 text-white rounded text-[10px] p-1 flex items-center justify-center">Leito 8</div></div></div><div class="col-span-4 row-span-2 bg-indigo-200 rounded p-1 flex items-center justify-center text-center"><span class="font-bold text-xs text-indigo-800">ÁREA DE APOIO<br>(Expurgo, DML)</span></div><div class="col-span-8 row-span-2 bg-gray-200 rounded p-2 flex items-center justify-center"><span class="font-bold text-xs text-gray-800">POSTO DE ENFERMAGEM / FARMÁCIA SATÉLITE</span></div></div></div></div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg"><h3 class="font-bold text-xl text-[#003366] mb-4 text-center">Explorador de Áreas de Atendimento (RDC 50/2002)</h3><div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="structure-grid"></div><div id="structure-details" class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200 hidden"><h4 id="details-title" class="font-bold text-lg text-[#003366]"></h4><p id="details-desc" class="mt-1 text-gray-700"></p><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"><div><p class="font-semibold text-gray-800">Dimensionamento Mínimo:</p><p id="details-dim" class="text-gray-600"></p></div><div><p class="font-semibold text-gray-800">Equipamentos Principais:</p><ul id="details-equips" class="mt-2 list-disc list-inside text-gray-600"></ul></div></div><div class="mt-4"><p class="font-semibold text-gray-800">Requisitos Essenciais de Infraestrutura:</p><ul id="details-reqs" class="mt-2 list-disc list-inside text-gray-600"></ul></div></div></div>
+                    <div class="mt-12 bg-white p-6 rounded-lg shadow-lg"><h3 class="font-bold text-xl text-[#003366] mb-4 text-center">Serviços de Apoio Essenciais</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><div class="card bg-gray-50 p-4 rounded-lg border"><h4 class="font-bold text-lg text-[#003366] mb-2">Central de Material e Esterilização (CME)</h4><p class="text-sm text-gray-600 mb-3">Responsável pelo processamento, limpeza, desinfecção, esterilização e distribuição de artigos médicos.</p><ul class="text-sm text-gray-600 list-disc list-inside"><li>Fluxo unidirecional (sujo para limpo).</li><li>Barreiras físicas entre áreas.</li><li>Controle de pressão e temperatura.</li></ul></div><div class="card bg-gray-50 p-4 rounded-lg border"><h4 class="font-bold text-lg text-[#003366] mb-2">Farmácia Satélite</h4><p class="text-sm text-gray-600 mb-3">Garante o armazenamento seguro e a dispensação rápida de medicamentos para a emergência.</p><ul class="text-sm text-gray-600 list-disc list-inside"><li>Acesso restrito e controlado.</li><li>Controle de temperatura e umidade.</li><li>Área para manipulação de doses.</li></ul></div><div class="card bg-gray-50 p-4 rounded-lg border"><h4 class="font-bold text-lg text-[#003366] mb-2">Serviço de Diagnóstico por Imagem</h4><p class="text-sm text-gray-600 mb-3">Realiza exames como Raio-X e Ultrassonografia para auxiliar no diagnóstico rápido e preciso.</p><ul class="text-sm text-gray-600 list-disc list-inside"><li>Sala baritada e blindada (Raio-X).</li><li>Equipamentos de proteção individual (EPIs).</li><li>Sistema digital ou processadora de imagem.</li></ul></div></div></div>
+                `,
+                'equipes': `
+                     <h2 class="section-title text-3xl font-bold text-center mb-2">Guia de Equipes e Dimensionamento</h2>
+                     <p class="text-center text-lg text-gray-600 mb-8 max-w-3xl mx-auto">O atendimento de emergência é um esforço multidisciplinar. Conheça os papéis, responsabilidades e como dimensionar a equipe de enfermagem.</p>
+                     <div class="mb-12">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Papéis e Responsabilidades</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="card bg-white p-6 rounded-lg shadow-lg"><h3 class="font-bold text-xl text-[#003366] mb-3">Liderança e Equipe Médica</h3><ul class="space-y-3 text-gray-700 text-sm"><li><strong>Diretor Técnico Médico:</strong> Gestão geral da unidade, responsabilidade ética e legal, garantia da qualidade assistencial.</li><li><strong>Médico Emergencista:</strong> Atendimento direto, diagnóstico, prescrição de tratamentos e realização de procedimentos de emergência.</li></ul></div>
+                            <div class="card bg-white p-6 rounded-lg shadow-lg"><h3 class="font-bold text-xl text-[#003366] mb-3">Equipe de Enfermagem</h3><ul class="space-y-3 text-gray-700 text-sm"><li><strong>Enfermeiro:</strong> Liderança da equipe de enfermagem, Classificação de Risco, execução de procedimentos complexos, administração de medicamentos controlados.</li><li><strong>Técnico/Auxiliar:</strong> Cuidados diretos ao paciente (sinais vitais, medicação, higiene), auxílio em procedimentos, organização do ambiente.</li></ul></div>
+                            <div class="card bg-white p-6 rounded-lg shadow-lg"><h3 class="font-bold text-xl text-[#003366] mb-3">Equipe Multidisciplinar</h3><ul class="space-y-3 text-gray-700 text-sm"><li><strong>Fisioterapeuta:</strong> Avaliação e manejo respiratório, suporte em ventilação mecânica, reabilitação motora precoce.</li><li><strong>Farmacêutico:</strong> Controle de estoque, dispensação, farmacovigilância e orientação sobre medicamentos.</li></ul></div>
+                        </div>
+                     </div>
+                     <div class="mt-12" id="calculadora">
+                        <h2 class="section-title text-3xl font-bold text-center mb-2">Calculadora de Dimensionamento de Enfermagem</h2>
+                        <p class="text-center text-lg text-gray-600 mb-8 max-w-3xl mx-auto">Use esta ferramenta interativa para estimar a equipe de enfermagem necessária com base na complexidade dos pacientes, seguindo a Resolução COFEN nº 543/2017.</p>
+                        <div class="bg-white p-6 rounded-lg shadow-lg"><div class="grid grid-cols-1 md:grid-cols-2 gap-8"><div><h3 class="font-bold text-xl text-[#003366] mb-4">1. Insira o número de pacientes</h3><div class="space-y-4"><div><label for="cuidado-intensivo" class="block text-sm font-medium text-gray-700">Cuidado Intensivo (Sala Vermelha)</label><p class="text-xs italic text-gray-500">Paciente grave, com risco iminente de morte, exigindo cuidado contínuo.</p><input type="number" id="cuidado-intensivo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="2"></div><div><label for="cuidado-semi-intensivo" class="block text-sm font-medium text-gray-700">Cuidado Semi-Intensivo</label><p class="text-xs italic text-gray-500">Paciente com risco de instabilidade, necessitando de monitoramento e cuidados complexos.</p><input type="number" id="cuidado-semi-intensivo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="4"></div><div><label for="cuidado-intermediario" class="block text-sm font-medium text-gray-700">Cuidado Intermediário</label><p class="text-xs italic text-gray-500">Paciente estável que requer cuidados, mas sem risco iminente. Ex: Pós-operatório em observação.</p><input type="number" id="cuidado-intermediario" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="10"></div><div><label for="cuidado-minimo" class="block text-sm font-medium text-gray-700">Cuidado Mínimo</label><p class="text-xs italic text-gray-500">Paciente estável, autossuficiente. Ex: Medicação oral, curativos simples.</p><input type="number" id="cuidado-minimo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="0"></div></div></div><div><h3 class="font-bold text-xl text-[#003366] mb-4">2. Resultados do Dimensionamento</h3><div class="bg-blue-50 p-4 rounded-lg space-y-3"><div><p class="text-sm text-gray-600">Total de Horas de Enfermagem (THE) / 24h:</p><p id="the-result" class="text-2xl font-bold text-[#003366]">0</p></div><div><p class="text-sm text-gray-600">Total de Profissionais (24h):</p><p id="total-staff-result" class="text-2xl font-bold text-[#003366]">0</p></div></div><div class="mt-4"><h3 class="font-bold text-lg text-[#003366] mb-2">Distribuição da Equipe (Recomendada)</h3><div class="chart-container"><canvas id="staffing-chart"></canvas></div></div></div></div></div>
+                     </div>
+                `,
+                'processos': `
+                    <h2 class="section-title text-3xl font-bold text-center mb-2">A Jornada do Paciente: Processos Mandatórios</h2>
+                    <p class="text-center text-lg text-gray-600 mb-8 max-w-3xl mx-auto">Processos bem definidos são a espinha dorsal de um atendimento seguro e eficaz. Clique em cada etapa para explorar os detalhes do fluxo, exemplos práticos e referências.</p>
+                    <div class="space-y-4" id="process-accordion"></div>
+                `,
+                'comissoes': `
+                    <h2 class="section-title text-3xl font-bold text-center mb-2">Comissões Obrigatórias e Governança Clínica</h2>
+                    <p class="text-center text-lg text-gray-600 mb-8 max-w-3xl mx-auto">A segurança e a qualidade do cuidado são sustentadas por comissões obrigatórias que supervisionam processos críticos na unidade.</p>
+                    <div class="mb-8"><h3 class="text-2xl font-semibold text-gray-800 mb-4">Comissões Fundamentais</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="card bg-white p-6 rounded-lg shadow-lg h-full flex flex-col"><h3 class="font-bold text-xl text-[#003366] mb-3">NSP - Núcleo de Segurança do Paciente</h3><p class="text-sm text-gray-600 mb-3 flex-grow">Promove a cultura de segurança e implementa protocolos para prevenir danos aos pacientes.</p><p class="text-xs italic text-gray-500 mt-3 border-t pt-2">Referência: ANVISA RDC nº 36/2013</p></div><div class="card bg-white p-6 rounded-lg shadow-lg h-full flex flex-col"><h3 class="font-bold text-xl text-[#003366] mb-3">CCIH - Comissão de Controle de Infecção Hospitalar</h3><p class="text-sm text-gray-600 mb-3 flex-grow">Desenvolve ações para prevenir e controlar infecções relacionadas à assistência à saúde (IRAS).</p><p class="text-xs italic text-gray-500 mt-3 border-t pt-2">Referência: Portaria MS nº 2.616/1998</p></div><div class="card bg-white p-6 rounded-lg shadow-lg h-full flex flex-col"><h3 class="font-bold text-xl text-[#003366] mb-3">CIPA - Comissão Interna de Prevenção de Acidentes</h3><p class="text-sm text-gray-600 mb-3 flex-grow">Focada na segurança dos trabalhadores. Obrigatória a partir de 20 funcionários (Grau de Risco 3).</p><p class="text-xs italic text-gray-500 mt-3 border-t pt-2">Referência: Norma Regulamentadora nº 5 (NR-5)</p></div></div></div>
+                    <div><h3 class="text-2xl font-semibold text-gray-800 mb-4">Outras Comissões de Governança Essenciais</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="card bg-gray-50 p-4 rounded-lg border h-full flex flex-col"><h4 class="font-bold text-lg text-[#003366] mb-2">Comissão de Ética Médica (CEM)</h4><p class="text-sm text-gray-600 mb-3 flex-grow">Fiscaliza o exercício ético da medicina dentro da instituição, atuando como um braço do CRM.</p><p class="text-xs italic text-gray-500 mt-auto border-t pt-2">Ref.: Resolução CFM n° 2.152/2016</p></div><div class="card bg-gray-50 p-4 rounded-lg border h-full flex flex-col"><h4 class="font-bold text-lg text-[#003366] mb-2">Comissão de Ética de Enfermagem (CEE)</h4><p class="text-sm text-gray-600 mb-3 flex-grow">Zela pelo cumprimento do código de ética da enfermagem e orienta a equipe sobre práticas adequadas.</p><p class="text-xs italic text-gray-500 mt-auto border-t pt-2">Ref.: Resolução COFEN n° 593/2018</p></div><div class="card bg-gray-50 p-4 rounded-lg border h-full flex flex-col"><h4 class="font-bold text-lg text-[#003366] mb-2">Comissão de Revisão de Prontuários</h4><p class="text-sm text-gray-600 mb-3 flex-grow">Avalia a qualidade dos registros nos prontuários, garantindo que sejam completos, legíveis e adequados legalmente.</p><p class="text-xs italic text-gray-500 mt-auto border-t pt-2">Ref.: Resolução CFM n° 1.638/2002</p></div><div class="card bg-gray-50 p-4 rounded-lg border h-full flex flex-col"><h4 class="font-bold text-lg text-[#003366] mb-2">Comissão de Revisão de Óbitos</h4><p class="text-sm text-gray-600 mb-3 flex-grow">Analisa os óbitos ocorridos na unidade para identificar oportunidades de melhoria no processo assistencial.</p><p class="text-xs italic text-gray-500 mt-auto border-t pt-2">Ref.: Resolução CFM n° 2.171/2017</p></div><div class="card bg-gray-50 p-4 rounded-lg border h-full flex flex-col"><h4 class="font-bold text-lg text-[#003366] mb-2">Comissão de Farmácia e Terapêutica (CFT)</h4><p class="text-sm text-gray-600 mb-3 flex-grow">Seleciona os medicamentos que farão parte do arsenal da unidade, com base em eficácia, segurança e custo.</p><p class="text-xs italic text-gray-500 mt-auto border-t pt-2">Ref.: Portaria MS n° 4.217/2010</p></div><div class="card bg-gray-50 p-4 rounded-lg border h-full flex flex-col"><h4 class="font-bold text-lg text-[#003366] mb-2">Comissão de Gerenciamento de Resíduos (CGRSS)</h4><p class="text-sm text-gray-600 mb-3 flex-grow">Elabora e supervisiona o Plano de Gerenciamento de Resíduos de Serviços de Saúde (PGRSS).</p><p class="text-xs italic text-gray-500 mt-auto border-t pt-2">Ref.: ANVISA RDC n° 222/2018</p></div></div></div>
+                `,
+                 'indicadores': `
+                    <h2 class="section-title text-3xl font-bold text-center mb-2">Indicadores Gerenciados de Emergência</h2>
+                    <p class="text-center text-lg text-gray-600 mb-8 max-w-3xl mx-auto">A gestão de uma unidade de emergência de alta performance depende do monitoramento de KPIs. As metas são baseadas em referências de acreditação como ONA e JCI.</p>
+                    <div class="space-y-8">
+                        <div><h3 class="text-2xl font-semibold text-gray-800 mb-4">Indicadores de Fluxo e Tempo</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo de Classificação</h4><p class="text-xs text-gray-500 mb-2">Tempo da chegada até o fim da classificação de risco.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora Fim Classif.) - (Hora Chegada)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 95%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 10 min</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo Porta-Médico</h4><p class="text-xs text-gray-500 mb-2">Tempo da chegada até o primeiro atendimento médico.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora Atend. Médico) - (Hora Chegada)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-yellow-500 h-2.5 rounded-full" style="width: 80%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 60 min (Amarelo)</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo de Permanência (LOS)</h4><p class="text-xs text-gray-500 mb-2">Tempo total do paciente na unidade (não internados).</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora Saída) - (Hora Chegada)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 90%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 4 horas</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Taxa de Evasão</h4><p class="text-xs text-gray-500 mb-2">% de pacientes que saem antes do atendimento.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Nº Evasões / Nº Atend.) x 100</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 98%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 2%</p></div></div></div>
+                        <div><h3 class="text-2xl font-semibold text-gray-800 mb-4">Indicadores de Processos Clínicos</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo Porta-ECG</h4><p class="text-xs text-gray-500 mb-2">Tempo da chegada até a realização do eletrocardiograma em dor torácica.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora ECG) - (Hora Chegada)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 96%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 10 min</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo Porta-TC</h4><p class="text-xs text-gray-500 mb-2">Tempo da chegada até a tomografia de crânio em suspeita de AVC.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora TC) - (Hora Chegada)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 92%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 25 min</p></div><div class="card bg-white p-4 rounded-lg shadow"><h4 class="font-bold text-[#003366]">Tempo para Antibiótico na Sepse</h4><p class="text-xs text-gray-500 mb-2">Tempo do diagnóstico de sepse até a primeira dose de antibiótico.</p><p class="text-xs italic text-gray-500 mb-2">Fórmula: (Hora ATB) - (Hora Diag.)</p><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-green-600 h-2.5 rounded-full" style="width: 94%"></div></div><p class="text-right text-sm font-semibold mt-1">Meta: &lt; 1 hora</p></div></div></div>
+                        <div><h3 class="text-2xl font-semib
